@@ -44,7 +44,7 @@
 
       if ($_GET['alert']=="gagal") {
         echo "<div class='alert alert-danger font-weight-bold text-center'>Maaf Username & Password Salah</div>";
-      }else if($_GET['alert'=="belum_login"]) {
+      }else if($_GET['alert']=="belum_login") {
         echo "<div class='alert alert-warning font-weight-bold text-center'>Anda Harus Login terlebih dahulu</div>" ;
       }else if($_GET['alert']=="logout") {
         echo "<div class='alert alert-success font-weight-bold text-center'>Anda Telah Logout</div>";

@@ -15,62 +15,75 @@
 							<h3 class="box-title">Artikel</h3>
 						</div>
 						<div class="box-body">
-							<table class="table table-bordered">
-								<thead>
+
+							<?php 
+							if (isset($_GET['alert'])) {
+
+								if ($_GET['alert'] == "sukses_hapus") {
+
+									echo "<div class='alert alert-success'>Data berhasil dihapus!</div>";
+
+								}else if ($_GET['alert'] == "gagal_hapus") {
+									echo "<div class='alert alert-danger'>Maaf, Data gagal dihapus!</div>";
+								}
+							}
+						?>
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th width="1%">NO</th>
+									<th>Tanggal</th>
+									<th>Artikel</th>
+									<th>Author</th>
+									<th>Kategori</th>
+									<th width="10%">Gambar</th>
+									<th>Status</th>
+									<th width="15%">OPSI</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php
+								$no = 1;
+								foreach($artikel as $a){
+									?>
 									<tr>
-										<th width="1%">NO</th>
-										<th>Tanggal</th>
-										<th>Artikel</th>
-										<th>Author</th>
-										<th>Kategori</th>
-										<th width="10%">Gambar</th>
-										<th>Status</th>
-										<th width="15%">OPSI</th>
+										<td><?php echo $no++; ?></td>
+										<td><?php echo date('d/m/Y H:i', strtotime($a->artikel_tanggal)); ?></td>
+										<td>
+											<?php echo $a->artikel_judul; ?>
+											<br/>
+											<small class="text-muted"> <?php echo base_url()."".$a->artikel_slug; ?></small>
+										</td>
+										<td><?php echo $a->pengguna_nama; ?></td>
+										<td><?php echo $a->kategori_nama; ?></td>
+										<td><img width="100%" class="img-responsive" src="<?php echo base_url('/gambar/artikel/').$a->artikel_sampul;?>"></td>
+										<td>
+											<?php
+											if($a->artikel_status=="publish"){
+												echo "<span class='label label-success'>Publish</span>";
+											}else{
+												echo "<span class='label label-danger'>Draft</span>";
+											}
+											?>
+										</td>
+										<td>
+											<a target="_blank" href="<?php echo base_url($a->artikel_slug); ?>" class="btn btn-success btn-sm">
+												<i class="fa fa-eye"></i>
+											</a>
+											<a href="<?php echo base_url('dashboard/artikel_edit/').$a->artikel_id; ?>" class="btn btn-warning btn-sm"> 
+												<i  class="fa fa-pencil"></i> 
+											</a>
+											<a href="<?php echo base_url('dashboard/artikel_hapus/').$a->artikel_id; ?>" class="btn btn-danger btn-sm">
+												<i class="fa fa-trash"></i> 
+											</a>
+										</td>
 									</tr>
-								</thead>
-								<tbody>
-									<?php
-									$no = 1;
-									foreach($artikel as $a){
-										?>
-										<tr>
-											<td><?php echo $no++; ?></td>
-											<td><?php echo date('d/m/Y H:i', strtotime($a->artikel_tanggal)); ?></td>
-											<td>
-												<?php echo $a->artikel_judul; ?>
-												<br/>
-												<small class="text-muted"> <?php echo base_url()."".$a->artikel_slug; ?></small>
-											</td>
-											<td><?php echo $a->pengguna_nama; ?></td>
-											<td><?php echo $a->kategori_nama; ?></td>
-											<td><img width="100%" class="img-responsive" src="<?php echo base_url('/gambar/artikel/').$a->artikel_sampul;?>"></td>
-											<td>
-												<?php
-												if($a->artikel_status=="publish"){
-													echo "<span class='label label-success'>Publish</span>";
-												}else{
-													echo "<span class='label label-danger'>Draft</span>";
-												}
-												?>
-											</td>
-											<td>
-												<a target="_blank" href="<?php echo base_url($a->artikel_slug); ?>" class="btn btn-success btn-sm">
-													<i class="fa fa-eye"></i>
-												</a>
-												<a href="<?php echo base_url('dashboard/artikel_edit/').$a->artikel_id; ?>" class="btn btn-warning btn-sm"> 
-													<iclass="fa fa-pencil"></i> 
-												</a>
-												<a href="<?php echo base_url('dashboard/artikel_hapus/').$a->artikel_id; ?>" class="btn btn-danger btn-sm">
-													<i class="fa fa-trash"></i> 
-												</a>
-											</td>
-										</tr>
-									<?php } ?>
-								</tbody>
-							</table>
-						</div>
+								<?php } ?>
+							</tbody>
+						</table>
 					</div>
 				</div>
 			</div>
-		</section>
-	</div>
+		</div>
+	</section>
+</div>

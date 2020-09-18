@@ -439,9 +439,120 @@ class Dashboard extends CI_Controller {
 		$this->load->view('dashboard/v_footer');
 	}
 
+	public function pages_tambah()
+	{
+		$this->load->view('dashboard/v_header');
+		$this->load->view('dashboard/v_pages_tambah');
+		$this->load->view('dashboard/v_footer');
+	}
+
 	public function pages_aksi()
 	{
-		# code...
+		// Wajib isi judul
+
+		$this->form_validation->set_rules('judul','Judul','required|is_unique[halaman.halaman_judul]');
+		$this->form_validation->set_rules('konten', 'Konten', 'required');
+
+		if ($this->form_validation->run() != false) {
+			
+			$judul = $this->input->post('judul');
+			$slug = strtolower(url_title($judul));
+			$konten = $this->input->post('konten');
+
+			$data = array(
+				'halaman_judul' => $judul , 
+				'halaman_slug' => $slug , 
+				'halaman_konten' => $konten  
+			);
+
+	 		//insert ke db
+			$this->m_data->insert_data($data,'halaman');
+
+	 		//alihkan ke method pages
+			redirect('dashboard/pages');
+		}else{
+			$this->load->view('dashboard/v_header');
+			$this->load->view('dashboard/v_pages_tambah');
+			$this->load->view('dashboard/v_footer');
+		}
+
+	}
+
+	public function pages_edit($id)
+	{
+		$where  = array('halaman_id' => $id );
+
+		$data['halaman'] = $this->m_data->edit_data($where,'halaman')->result();
+
+		//viewnya
+		$this->load->view('dashboard/v_header');
+		$this->load->view('dashboard/v_pages_edit', $data);
+		$this->load->view('dashboard/v_footer');
+
+	}
+
+	public function pages_update()
+	{
+		
+		// Wajib isi judul
+
+		$this->form_validation->set_rules('judul','Judul','required|is_unique[halaman.halaman_judul]');
+		$this->form_validation->set_rules('konten', 'Konten', 'required');
+
+		if ($this->form_validation->run() != false) {
+
+			//id data yang diedit
+
+			$id = $this->input->post('id');
+			
+			$judul = $this->input->post('judul');
+			$slug = strtolower(url_title($judul));
+			$konten = $this->input->post('konten');
+
+			//id data yang tadi ditangkap
+
+			$where = array('halaman_id' => $id );
+
+
+			$data = array(
+				'halaman_judul' => $judul , 
+				'halaman_slug' => $slug , 
+				'halaman_konten' => $konten  
+			);
+
+			var_dump($data, $id);
+			// die();
+	 		//update ke db
+			$this->m_data->update_data($where, $data,'halaman');
+
+	 		//alihkan ke method pages
+			redirect('dashboard/pages');
+
+		}else{
+
+			$id = $this->input->post('id');
+			$where = array('halaman_id' => $id );
+
+			//ambil data di db
+			$data['halaman'] = $this->m_data->edit_data($where,'halaman')->result();
+
+			//ini viewnya
+			$this->load->view('dashboard/v_header');
+			$this->load->view('dashboard/v_pages_edit');
+			$this->load->view('dashboard/v_footer');
+		}
+	}
+
+
+	public function pages_hapus($id)
+	{
+		//menangkap id
+		$where  = array('halaman_id' => $id );
+
+		//hapus dari db
+		$this->m_data->delete_data($where, 'halaman');
+
+		redirect('dashboard/pages');
 	}
 } 
 

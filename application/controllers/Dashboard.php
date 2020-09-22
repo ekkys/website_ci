@@ -615,6 +615,83 @@ class Dashboard extends CI_Controller {
 			$this->load->view('dashboard/v_footer');
 		}
 	}
+
+// Akhir UPDATE Profil
+
+// CRUD Pengaturan
+
+	public function pengaturan()
+	{
+		//memanggil data dari db
+		$data['pengaturan'] = $this->m_data->get_data('pengaturan')->result();
+
+		//ini viewnya
+		$this->load->view('dashboard/v_header');
+		$this->load->view('dashboard/v_pengaturan',$data);
+		$this->load->view('dashboard/v_footer');
+	}
+
+	public function pengaturan_update()
+	{
+		// Wajib isi nama dan deskripsi website
+		$this->form_validation->set_rules('nama','Nama Website','required');
+		$this->form_validation->set_rules('deskripsi','Deskripsi Website','required');
+
+		if ($this->form_validation->run() != false) {
+			
+			//post data yang di input dari form
+			$nama = $this->input->post('nama');
+			$deskripsi = $this->input->post('deskripsi');
+			$link_facebook = $this->input->post('link_facebook');
+			$link_twitter = $this->input->post('link_twitter');
+			$link_instagram = $this->input->post('link_instagram');
+			$link_github = $this->input->post('link_github');
+
+			//where nya kosong
+			$where = array();
+
+			$data= array(
+				'nama' => $nama,
+				'deskripsi' => $deskripsi,
+				'link_facebook' => $link_facebook,
+				'link_twitter' => $link_twitter,
+				'link_instagram' => $link_instagram,
+				'link_github' => $link_github
+			);
+
+			// update pengaturan
+			$this->m_data->update_data($where,$data,'pengaturan');
+
+			// Periksa apakah ada gambar logo yang diupload
+			if (!empty($_FILES['logo']['name'])) {
+				
+				$config['upload_path'] = './gambar/website/';
+				$config['allowed_types'] = 'jpg|png';
+				$this->load->library('upload', $config);
+
+
+				if ($this->upload->do_upload('logo')) {
+
+					// mengambil data tentang gambar logo yang diupload
+					$gambar = $this->upload->data();
+					$logo = $gambar['file_name'];
+					$this->db->query("UPDATE pengaturan SET logo='$logo'");
+				}
+			}
+
+			redirect(base_url().'dashboard/pengaturan/?alert=sukses');
+
+		}else{
+
+			//panggil data pengaturan dari db
+			$data['pengaturan'] = $this->m_data->get_data('pengaturan')->result();
+
+			//tampil disini
+			$this->load->view('dashboard/v_header');
+			$this->load->view('dashboard/v_pengaturan',$data);
+			$this->load->view('dashboard/v_footer');
+		}
+	}
 } 
 
 /* End of file Dashboard.php */

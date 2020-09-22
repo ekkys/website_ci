@@ -618,7 +618,7 @@ class Dashboard extends CI_Controller {
 
 // Akhir UPDATE Profil
 
-// CRUD Pengaturan
+// UPDATE Pengaturan
 
 	public function pengaturan()
 	{
@@ -692,6 +692,97 @@ class Dashboard extends CI_Controller {
 			$this->load->view('dashboard/v_footer');
 		}
 	}
+
+// Akhir UPDATE Pengaturan
+
+//  CRUD Pengguna
+
+	public function pengguna()
+	{
+		$data['pengguna'] = $this->m_data->get_data('pengguna')->result();
+		$this->load->view('dashboard/v_header');
+		$this->load->view('dashboard/v_pengguna',$data);
+		$this->load->view('dashboard/v_footer');
+	}
+
+	public function pengguna_tambah()
+	{
+		$this->load->view('dashboard/v_header');
+		$this->load->view('dashboard/v_pengguna_tambah');
+		$this->load->view('dashboard/v_footer');
+	}
+
+	public function pengguna_aksi()
+	{
+		// Wajib isi
+		$this->form_validation->set_rules('nama','Nama Pengguna','required');
+		$this->form_validation->set_rules('email','Email Pengguna','required');
+		$this->form_validation->set_rules('username','Username Pengguna','required');
+		$this->form_validation->set_rules('password','Password Pengguna','required|min_length[8]');
+		$this->form_validation->set_rules('level','Level Pengguna','required');
+		$this->form_validation->set_rules('status','Status Pengguna','required');
+
+
+		if($this->form_validation->run() != false){
+
+		//Kondisi jika form sudah di isi sesuai ketentuan
+
+			//post dari form input
+			$nama = $this->input->post('nama');
+			$email = $this->input->post('email');
+			$username = $this->input->post('username');
+			$password = md5($this->input->post('password'));
+			$level = $this->input->post('level');
+			$status = $this->input->post('status');
+
+			//data ditampung dalam array
+			$data = array(
+				'pengguna_nama' => $nama,
+				'pengguna_email' => $email,
+				'pengguna_username' => $username,
+				'pengguna_password' => $password,
+				'pengguna_level' => $level,
+				'pengguna_status' => $status
+			);
+
+			//insert ke db
+			$this->m_data->insert_data($data,'pengguna');
+
+			//direct ke dashboard
+			redirect(base_url().'dashboard/pengguna');
+		}else{
+
+			//Kondisi jika form tidak di isi sesuai ketentuan
+			$this->load->view('dashboard/v_header');
+			$this->load->view('dashboard/v_pengguna_tambah');
+			$this->load->view('dashboard/v_footer');
+
+		}
+	}
+
+	public function pengguna_edit($id)
+	{
+		//menangkap id untuk dijadikan where
+		$where = array(
+			'pengguna_id' => $id
+		);
+
+		//memanggil data sesuai id
+		$data['pengguna'] = $this->m_data->edit_data($where,'pengguna')->result();
+
+		//ini viewnya
+		$this->load->view('dashboard/v_header');
+		$this->load->view('dashboard/v_pengguna_edit',$data);
+		$this->load->view('dashboard/v_footer');
+	}
+
+	public function pengguna_update()
+	{
+		
+	}
+
+// Akhir CRUD Pengguna
+
 } 
 
 /* End of file Dashboard.php */

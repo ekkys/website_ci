@@ -554,6 +554,67 @@ class Dashboard extends CI_Controller {
 
 		redirect('dashboard/pages');
 	}
+
+//Akhir CRUD Pages 
+
+// CRUD Profil
+	public function profil()
+	{
+		//id pengguna yang sedang login
+		$id_pengguna = $this->session->userdata('id');
+
+		//idnya ditampung di array
+		$where = array('pengguna_id' => $id_pengguna );
+
+		//panggil data pengguna by id dari db
+		$data['profil'] = $this->m_data->edit_data($where, 'pengguna')->result();
+
+		//ini viewnya
+		$this->load->view('dashboard/v_header');
+		$this->load->view('dashboard/v_profil',$data);
+		$this->load->view('dashboard/v_footer');
+	}
+
+	public function profil_update()
+	{
+		// Wajib isi nama dan email
+		$this->form_validation->set_rules('nama','Nama','required');
+		$this->form_validation->set_rules('email','Email','required');
+
+		if ($this->form_validation->run() != false) {
+			
+			// id pengguna yang sedang login
+			$id_pengguna = $this->session->userdata('id');
+
+			$nama = $this->input->post('nama');
+			$email = $this->input->post('email');
+
+			// id-nya ditampung di array
+			$where = array('pengguna_id' => $id_pengguna );
+
+			//data yang mau di update di tampung di array $data
+			$data = array(
+				'pengguna_nama' => $nama,
+				'pengguna_email' => $email
+			);
+
+			//update data ke db
+			$this->m_data->update_data($where, $data, 'pengguna');
+
+			redirect(base_url('dashboard/profil/?alert=sukses'));
+		}else{
+			// id pengguna yang sedang login
+			$id_pengguna = $this->session->userdata('id');
+
+			// id-nya ditampung di array
+			$where = array('pengguna_id' => $id_pengguna );
+
+			$data['profil'] = $this->m_data->edit_data($where,'pengguna')->result();
+			$this->load->view('dashboard/v_header');
+			$this->load->view('dashboard/v_profil',$data);
+			$this->load->view('dashboard/v_footer');
+		}
+	}
 } 
 
 /* End of file Dashboard.php */

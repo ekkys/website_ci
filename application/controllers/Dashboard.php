@@ -18,6 +18,19 @@ class Dashboard extends CI_Controller {
 
 	public function index()
 	{
+		//hitung jumlah artikel
+		$data['jumlah_artikel'] = $this->m_data->get_data('artikel')->num_rows();
+
+
+		//hitung jumlah kategori
+		$data['jumlah_kategori'] = $this->m_data->get_data('kategori')->num_rows();
+
+		//hitung jumlah pengguna
+		$data['jumlah_pengguna'] = $this->m_data->get_data('pengguna')->num_rows();
+
+		//hitung jumlah halaman
+		$data['jumlah_halaman'] = $this->m_data->get_data('halaman')->num_rows();
+
 		$this->load->view('dashboard/v_header');
 		$this->load->view('dashboard/v_index');
 		$this->load->view('dashboard/v_footer');
@@ -778,7 +791,108 @@ class Dashboard extends CI_Controller {
 
 	public function pengguna_update()
 	{
-		
+		// Wajib isi
+		$this->form_validation->set_rules('nama','Nama Pengguna','required');
+		$this->form_validation->set_rules('email','Email Pengguna','required');
+		$this->form_validation->set_rules('username','Username Pengguna','required');
+		$this->form_validation->set_rules('level','Level Pengguna','required');
+		$this->form_validation->set_rules('status','Status Pengguna','required');
+
+		if ($this->form_validation->run() != false) {
+
+			$id = $this->input->post('id');
+			
+			$nama = $this->input->post('nama');
+			$email = $this->input->post('email');
+			$username = $this->input->post('username');
+			$password = md5($this->input->post('password'));
+			$level = $this->input->post('level');
+			$status = $this->input->post('status'); 
+
+
+			//cek jika form password tidak diisi, maka jangan update kolum password, dan sebaliknya
+
+			if ($this->input->post('password') == "") {
+
+				//tanpa update pass
+				$data = array(
+					'pengguna_nama' => $nama,
+					'pengguna_email' => $email,
+					'pengguna_username' => $username,
+					'pengguna_level' => $level,
+					'pengguna_status' => $status
+				);
+			}else{
+
+				//dengan update pass
+				$data = array(
+					'pengguna_nama' => $nama,
+					'pengguna_email' => $email,
+					'pengguna_username' => $username,
+					'pengguna_password' => $password, //ini yang menampung pass baru
+					'pengguna_level' => $level,
+					'pengguna_status' => $status
+				);
+			}
+
+			// sebagai where untuk update berisi id data yng mau diupdate
+			$where  = array('pengguna_id' => $id);
+
+			// update ke db
+			$this->m_data->update_data($where,$data,'pengguna');
+
+			redirect(base_url('dashboard/pengguna'));
+		}else{
+
+			// kalau gagal update balik ke halaman itu lagi
+			$id = $this->input->post('id');
+
+			$where = array(
+				'pengguna_id' => $id
+			);
+
+			$data['pengguna'] = $this->m_data->edit_data($where,'pengguna')->result();
+			$this->load->view('dashboard/v_header');
+			$this->load->view('dashboard/v_pengguna_edit',$data);
+			$this->load->view('dashboard/v_footer');
+		}
+	}
+
+	public function pengguna_hapus($id)
+	{
+		$where = array('pengguna_id' => $id);
+
+
+		//memanggil data sesuai id data yang mau dihapus ditampung dlm array
+		$data['pengguna_hapus'] = $this->m_data->edit_data($where, 'pengguna')->row();
+
+		// memanggil data selain yan mau di hapus
+		$data['pengguna_lain'] = $this->db->query("SELECT * FROM pengguna WHERE pengguna_id != $id")->result();
+
+		//ini viewnya
+		$this->load->view('dashboard/v_header');
+		$this->load->view('dashboard/v_pengguna_hapus',$data);
+		$this->load->view('dashboard/v_footer');
+	}
+
+	public function pengguna_hapus_aksi()
+	{
+		$pengguna_hapus = $this->input->post('pengguna_hapus');
+
+		$pengguna_tujuan = $this->input->post('pengguna_tujuan');
+
+		//hapus pengguna
+		$where = array('pengguna_id' => $pengguna_hapus );
+
+		$this->m_data->delete_data($where,'pengguna');
+
+		// pindahkan semua artikel pengguna yang dihapus ke pengguna yang dipilih
+		$w = array('artikel_author' => $pengguna_hapus);
+		$d = array('artikel_author' => $pengguna_tujuan);
+
+		$this->m_data->update_data($w,$d,'artikel');
+
+		redirect(base_url().'dashboard/pengguna');
 	}
 
 // Akhir CRUD Pengguna

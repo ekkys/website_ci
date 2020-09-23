@@ -125,36 +125,49 @@
               <span>DASHBOARD</span>
             </a>
           </li>
-          <li>
-            <a href="<?php echo base_url('dashboard/kategori');?>">
-              <i class="fa fa-th"></i>
-              <span>KATEGORI</span>
-            </a>
-          </li>
+
+          <?php 
+          //cek jika yang login adalah admin
+          if ($this->session->userdata('level') == "admin")  { ?>
+
+            <li>
+              <a href="<?php echo base_url('dashboard/kategori');?>">
+                <i class="fa fa-th"></i>
+                <span>KATEGORI</span>
+              </a>
+            </li>
+          <?php }   ?>
+
           <li>
             <a href="<?php echo base_url('dashboard/artikel'); ?>">
               <i class="fa fa-pencil"></i>
               <span>ARTIKEL</span>
             </a>
           </li>
-          <li>
-            <a href="<?php echo base_url('dashboard/pages'); ?>">
-              <i class="fa fa-files-o"></i>
-              <span>PAGES</span>
-            </a>
-          </li>
-          <li>
-            <a href="<?php echo base_url('dashboard/pengguna'); ?>">
-              <i class="fa fa-users"></i>
-              <span>PENGGUNA & HAK AKSES</span>
-            </a>
-          </li>
-          <li>
-            <a href="<?php echo base_url('dashboard/pengaturan'); ?>">
-              <i class="fa fa-edit"></i>
-              <span>PENGATURAN WEBSITE</span>
-            </a>
-          </li>
+
+          <?php 
+          //cek jika yang login adalah admin
+          if ($this->session->userdata('level') == "admin")  { ?>
+            <li>
+              <a href="<?php echo base_url('dashboard/pages'); ?>">
+                <i class="fa fa-files-o"></i>
+                <span>PAGES</span>
+              </a>
+            </li>
+            <li>
+              <a href="<?php echo base_url('dashboard/pengguna'); ?>">
+                <i class="fa fa-users"></i>
+                <span>PENGGUNA & HAK AKSES</span>
+              </a>
+            </li>
+            <li>
+              <a href="<?php echo base_url('dashboard/pengaturan'); ?>">
+                <i class="fa fa-edit"></i>
+                <span>PENGATURAN WEBSITE</span>
+              </a>
+            </li>
+          <?php }   ?>
+          
           <li>
             <a href="<?php echo base_url('dashboard/profil'); ?>">
               <i class="fa fa-user"></i>

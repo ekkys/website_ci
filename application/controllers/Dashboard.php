@@ -21,7 +21,6 @@ class Dashboard extends CI_Controller {
 		//hitung jumlah artikel
 		$data['jumlah_artikel'] = $this->m_data->get_data('artikel')->num_rows();
 
-
 		//hitung jumlah kategori
 		$data['jumlah_kategori'] = $this->m_data->get_data('kategori')->num_rows();
 
@@ -32,7 +31,7 @@ class Dashboard extends CI_Controller {
 		$data['jumlah_halaman'] = $this->m_data->get_data('halaman')->num_rows();
 
 		$this->load->view('dashboard/v_header');
-		$this->load->view('dashboard/v_index');
+		$this->load->view('dashboard/v_index', $data);
 		$this->load->view('dashboard/v_footer');
 	}
 
